@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Her Nose — In Awe of Her</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+  <div class="petals" id="petals"></div>
+  <div class="starfield" id="starfield"></div>
+  <div class="glow-orb"></div>
+
+  <section class="page-hero">
+    <h1 class="page-title">Her <em>Beautiful Nose</em></h1>
+    <div class="header-line"></div>
+  </section>
+
+  <p class="page-poem">
+While others may overlook the finer details, I find that her nose is a vital, glowing star in the constellation of her face—an anchor of beauty that simply cannot be ignored. It is, to my eyes, the most perfect feature I have ever beheld, possessing a soft slope and a grace that draws my gaze time and time again. I am captivated by the subtle, rhythmic movements it makes as she speaks or draws breath, and when she is genuinely amused, the way it crinkles in that unforced, honest rhythm is a sight that humbles me with its cuteness. Every small detail of her deserves its own history, and her nose is no exception; it is a divine masterpiece of form and spirit. I notice everything—not because it is my duty, but because every inch of her is a treasure that I am honored to protect and adore for all my days.
+</p>
+
+  <div class="gallery">
+    <div class="polaroid">
+      <img src="../images/Nose/1.jpeg" alt="Her">
+      <span class="caption">Delicate</span>
+    </div>
+    <div class="polaroid">
+      <img src="../images/Nose/2.jpeg" alt="Her">
+      <span class="caption">Perfect</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <a href="../index.html" class="back-link">← return to her portrait</a>
+
+  <script>
+    const sf=document.getElementById('starfield');for(let i=0;i<80;i++){const s=document.createElement('div');s.className='star';const z=.5+Math.random()*1.5;s.style.cssText=`width:${z}px;height:${z}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${2+Math.random()*4}s;animation-delay:${Math.random()*6}s;opacity:${.1+Math.random()*.45};`;sf.appendChild(s);}
+    const cur=document.getElementById('cursor'),ring=document.getElementById('cursorRing');let mx=0,my=0,rx=0,ry=0;document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});(function l(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;cur.style.left=mx+'px';cur.style.top=my+'px';ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(l);})();
+    document.addEventListener('click',e=>{['✧','✦','✿','❤','♡'].forEach((s,i)=>{setTimeout(()=>{const h=document.createElement('div');h.className='heart-burst';h.textContent=s;h.style.left=(e.clientX+(Math.random()-.5)*50)+'px';h.style.top=(e.clientY+(Math.random()-.5)*50)+'px';h.style.color=`hsl(${345+Math.random()*20},55%,${65+Math.random()*18}%)`;h.style.fontSize=(10+Math.random()*13)+'px';document.body.appendChild(h);setTimeout(()=>h.remove(),860);},i*60);});});
+    const pc=document.getElementById('petals');['✿','❀','✾'].forEach(c=>{for(let i=0;i<5;i++){const p=document.createElement('span');p.className='petal';p.textContent=c;p.style.cssText=`left:${Math.random()*100}vw;animation-duration:${9+Math.random()*12}s;animation-delay:${Math.random()*14}s;font-size:${8+Math.random()*9}px;color:hsl(${345+Math.random()*25},40%,${65+Math.random()*20}%);opacity:${.2+Math.random()*.3};`;pc.appendChild(p);}});
+  </script>
+
+</body>
+</html>

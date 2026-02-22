@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Her Dress — In Awe of Her</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+  <div class="petals" id="petals"></div>
+  <div class="starfield" id="starfield"></div>
+  <div class="glow-orb"></div>
+
+  <section class="page-hero">
+    <p class="eyebrow">today she wore</p>
+    <h1 class="page-title">The Dress That <em>Stopped Time</em></h1>
+    <div class="header-line"></div>
+  </section>
+
+  <p class="page-poem">
+The dress my baby wore today was far more than mere fabric; it was a masterpiece of destiny, where every delicate pattern and soft hue blended in perfect harmony with the warmth of her skin. There was a silent, ethereal competition unfolding before my eyes, as if the dress and her natural radiance were vying for the throne of beauty. I had to step in with a King’s command, playfully threatening the threads themselves to step back and let her brilliance take its rightful place—and my magic held true, for the attire surrendered, becoming the perfect canvas for her stunning presence. She did not just wear the dress; she breathed life into it, making it look destined rather than chosen. To see her so perfectly framed, so breathtakingly beautiful, was a reminder that while clothes may be crafted by hand, the way she looks in them is a wonder crafted by the heavens.
+</p>
+
+  <!-- Only the dress from today's photo -->
+  <div class="dress-feature">
+    <img src="../images/Main.jpeg" alt="Her in that dress">
+    <div class="dress-feature-caption">today's favourite frame of you</div>
+    <p class="dress-detail">
+      The white printed top with its flutter sleeves and sweetheart neckline —
+      light, effortless, perfectly you. The kind of outfit that stays in someone's
+      memory long after the day is over.
+    </p>
+  </div>
+
+  <div class="divider"></div>
+  <a href="../index.html" class="back-link">← return to her portrait</a>
+
+  <script>
+    const sf=document.getElementById('starfield');
+    for(let i=0;i<80;i++){const s=document.createElement('div');s.className='star';const z=.5+Math.random()*1.5;s.style.cssText=`width:${z}px;height:${z}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${2+Math.random()*4}s;animation-delay:${Math.random()*6}s;opacity:${.1+Math.random()*.45};`;sf.appendChild(s);}
+    const cur=document.getElementById('cursor'),ring=document.getElementById('cursorRing');let mx=0,my=0,rx=0,ry=0;
+    document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+    (function l(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;cur.style.left=mx+'px';cur.style.top=my+'px';ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(l);})();
+    document.addEventListener('click',e=>{['✧','✦','✿','❤'].forEach((s,i)=>{setTimeout(()=>{const h=document.createElement('div');h.className='heart-burst';h.textContent=s;h.style.left=(e.clientX+(Math.random()-.5)*40)+'px';h.style.top=(e.clientY+(Math.random()-.5)*40)+'px';h.style.color=`hsl(${345+Math.random()*20},55%,${70+Math.random()*15}%)`;h.style.fontSize=(11+Math.random()*12)+'px';document.body.appendChild(h);setTimeout(()=>h.remove(),860);},i*60);});});
+    const pc=document.getElementById('petals');['✿','❀','✾'].forEach((c,idx)=>{for(let i=0;i<6;i++){const p=document.createElement('span');p.className='petal';p.textContent=c;p.style.cssText=`left:${Math.random()*100}vw;animation-duration:${9+Math.random()*12}s;animation-delay:${Math.random()*14}s;font-size:${8+Math.random()*8}px;color:hsl(${345+Math.random()*25},40%,${65+Math.random()*20}%);opacity:${.2+Math.random()*.3};`;pc.appendChild(p);}});
+  </script>
+
+</body>
+</html>

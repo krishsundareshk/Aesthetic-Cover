@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Her Smile — In Awe of Her</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+  <div class="petals" id="petals"></div>
+  <div class="starfield" id="starfield"></div>
+  <div class="glow-orb"></div>
+
+  <section class="page-hero">
+    <h1 class="page-title">Her <em>Smile</em></h1>
+    <div class="header-line"></div>
+  </section>
+
+  <p class="page-poem">
+Is my North Star, a radiant, unhurried light that has the power to melt the coldest corners of my heart. When she breaks into a full, genuine laugh—the kind where her teeth and gums show in beautiful, honest abandon—the world around us seems to adjust itself just to witness her joy. To me, that smile is breathtakingly beautiful and captivating; it is the masterpiece I seek out every morning and the memory I cling to every night. I find myself utterly mesmerized by the way her cheeks bunch up so adorably, a sight that is easily my favorite thing in this world. It is the reason I strive with every ounce of my strength, working tirelessly just to be the cause of that happiness. To see her smile freely is my greatest victory as her King(Knight), and I would spend every waking hour ensuring its warmth never fades from her face.
+</p>
+
+  <div class="gallery">
+    <div class="polaroid">
+      <img src="../images/Smile/2.jpeg" alt="Her smile">
+      <span class="caption">Sunrise</span>
+    </div>
+    <div class="polaroid">
+      <img src="../images/Smile/3.jpeg" alt="Her smile">
+      <span class="caption">Radiance</span>
+    </div>
+    <div class="polaroid">
+      <img src="../images/Smile/4.jpeg" alt="Her smile">
+      <span class="caption">Magic</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <a href="../index.html" class="back-link">← return to her portrait</a>
+
+  <script>
+    const sf=document.getElementById('starfield');for(let i=0;i<80;i++){const s=document.createElement('div');s.className='star';const z=.5+Math.random()*1.5;s.style.cssText=`width:${z}px;height:${z}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${2+Math.random()*4}s;animation-delay:${Math.random()*6}s;opacity:${.1+Math.random()*.45};`;sf.appendChild(s);}
+    const cur=document.getElementById('cursor'),ring=document.getElementById('cursorRing');let mx=0,my=0,rx=0,ry=0;document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});(function l(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;cur.style.left=mx+'px';cur.style.top=my+'px';ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(l);})();
+    document.addEventListener('click',e=>{['✧','✦','✿','❤','♡'].forEach((s,i)=>{setTimeout(()=>{const h=document.createElement('div');h.className='heart-burst';h.textContent=s;h.style.left=(e.clientX+(Math.random()-.5)*50)+'px';h.style.top=(e.clientY+(Math.random()-.5)*50)+'px';h.style.color=`hsl(${345+Math.random()*20},55%,${65+Math.random()*18}%)`;h.style.fontSize=(10+Math.random()*13)+'px';document.body.appendChild(h);setTimeout(()=>h.remove(),860);},i*60);});});
+    const pc=document.getElementById('petals');['✿','❀','✾'].forEach(c=>{for(let i=0;i<5;i++){const p=document.createElement('span');p.className='petal';p.textContent=c;p.style.cssText=`left:${Math.random()*100}vw;animation-duration:${9+Math.random()*12}s;animation-delay:${Math.random()*14}s;font-size:${8+Math.random()*9}px;color:hsl(${345+Math.random()*25},40%,${65+Math.random()*20}%);opacity:${.2+Math.random()*.3};`;pc.appendChild(p);}});
+  </script>
+
+</body>
+</html>

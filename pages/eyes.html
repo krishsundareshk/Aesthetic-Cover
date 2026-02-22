@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Her Eyes — In Awe of Her</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+  <div class="petals" id="petals"></div>
+  <div class="starfield" id="starfield"></div>
+  <div class="glow-orb"></div>
+
+  <section class="page-hero">
+    <h1 class="page-title">Her <em>Eyes</em></h1>
+    <div class="header-line"></div>
+  </section>
+
+  <p class="page-poem">
+Are a divine sanctuary, two deep and wonderful worlds where I gladly lose my sense of time. There is a profound honesty in their depth—a quiet, shimmering kindness that feels more like home. I could spend an eternity staring into them, forever curious, forever captivated by the way they convey a thousand unspoken emotions in a single glance. Even the playful, cute way she rolls them is a treasure to me, a small spark of the spirit I so deeply admire. They are mirrors of her soul, filled to the brim with a love so pure it humbles me. To read her eyes is to know a truth more beautiful than any poet could write, and I find myself endlessly wanting more of the warmth that lives behind them.
+</p>
+
+  <div class="gallery">
+    <div class="polaroid">
+      <img src="../images/Eyes/1.jpeg" alt="Her eyes">
+      <span class="caption">Starlight</span>
+    </div>
+    <div class="polaroid">
+      <img src="../images/Eyes/2.jpeg" alt="Her eyes">
+      <span class="caption">Magic</span>
+    </div>
+    <div class="polaroid">
+      <img src="../images/Eyes/3.jpeg" alt="Her eyes">
+      <span class="caption">Infinity</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <a href="../index.html" class="back-link">← return to her portrait</a>
+
+  <script>
+    const sf=document.getElementById('starfield');for(let i=0;i<80;i++){const s=document.createElement('div');s.className='star';const z=.5+Math.random()*1.5;s.style.cssText=`width:${z}px;height:${z}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${2+Math.random()*4}s;animation-delay:${Math.random()*6}s;opacity:${.1+Math.random()*.45};`;sf.appendChild(s);}
+    const cur=document.getElementById('cursor'),ring=document.getElementById('cursorRing');let mx=0,my=0,rx=0,ry=0;document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});(function l(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;cur.style.left=mx+'px';cur.style.top=my+'px';ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(l);})();
+    document.addEventListener('click',e=>{['✧','✦','✿','❤','♡'].forEach((s,i)=>{setTimeout(()=>{const h=document.createElement('div');h.className='heart-burst';h.textContent=s;h.style.left=(e.clientX+(Math.random()-.5)*50)+'px';h.style.top=(e.clientY+(Math.random()-.5)*50)+'px';h.style.color=`hsl(${345+Math.random()*20},55%,${65+Math.random()*18}%)`;h.style.fontSize=(10+Math.random()*13)+'px';document.body.appendChild(h);setTimeout(()=>h.remove(),860);},i*60);});});
+    const pc=document.getElementById('petals');['✿','❀','✾'].forEach(c=>{for(let i=0;i<5;i++){const p=document.createElement('span');p.className='petal';p.textContent=c;p.style.cssText=`left:${Math.random()*100}vw;animation-duration:${9+Math.random()*12}s;animation-delay:${Math.random()*14}s;font-size:${8+Math.random()*9}px;color:hsl(${345+Math.random()*25},40%,${65+Math.random()*20}%);opacity:${.2+Math.random()*.3};`;pc.appendChild(p);}});
+  </script>
+
+</body>
+</html>
