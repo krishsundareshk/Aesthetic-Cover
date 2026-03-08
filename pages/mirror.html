@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Mirror Knows — For Her</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400;1,600&family=Cormorant+Garamond:ital,wght@1,300;1,400&family=Nunito:wght@200;300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: #0d0612;
+      background-image:
+        radial-gradient(ellipse at 20% 0%, rgba(244,114,160,.22) 0%, transparent 52%),
+        radial-gradient(ellipse at 80% 100%, rgba(200,70,110,.15) 0%, transparent 52%);
+      color: #f0e8ed;
+      min-height: 100vh;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ── BASE ── */
+    .starfield { position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden }
+    .star { position:absolute;background:white;border-radius:50%;animation:twinkle ease-in-out infinite }
+    @keyframes twinkle { 0%,100%{opacity:.1;transform:scale(1)} 50%{opacity:.85;transform:scale(1.5)} }
+
+    .glow-orb { position:fixed;width:800px;height:800px;background:radial-gradient(circle,rgba(244,114,160,.15) 0%,transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:0;animation:orbPulse 8s ease-in-out infinite }
+    @keyframes orbPulse { 0%,100%{opacity:.6;transform:translate(-50%,-50%)scale(1)} 50%{opacity:1;transform:translate(-50%,-50%)scale(1.1)} }
+
+    .cursor { position:fixed;width:8px;height:8px;background:#f472a0;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);box-shadow:0 0 14px #f472a0,0 0 28px rgba(244,114,160,.55) }
+    .cursor-ring { position:fixed;width:34px;height:34px;border:1.5px solid rgba(244,114,160,.55);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%) }
+
+    .petals-rain { position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden }
+    .petal { position:absolute;top:-28px;animation:petalFall linear infinite;opacity:0 }
+    @keyframes petalFall {
+      0%   { opacity:.6; transform:translateY(0) rotate(0) }
+      50%  { transform:translateY(50vh) translateX(22px) rotate(200deg) }
+      100% { opacity:0; transform:translateY(112vh) translateX(-16px) rotate(390deg) }
+    }
+
+    .heart-burst { position:fixed;pointer-events:none;z-index:9000;animation:burst .95s ease-out forwards;transform:translate(-50%,-50%) }
+    @keyframes burst { 0%{opacity:1;transform:translate(-50%,-50%)scale(1)} 100%{opacity:0;transform:translate(-50%,-175%)scale(.25)} }
+
+    @keyframes rise { from{opacity:0;transform:translateY(32px)} to{opacity:1;transform:translateY(0)} }
+
+    /* ── HEADER ── */
+    .page-hero { position:relative;z-index:2;text-align:center;padding:80px 24px 36px }
+    .eyebrow { font-weight:200;font-size:.64rem;letter-spacing:.65em;text-transform:uppercase;color:#f472a0;margin-bottom:18px;opacity:0;animation:rise .8s .2s forwards }
+    .page-title { font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(2.4rem,6.5vw,5rem);color:#f0e8ed;line-height:1.12;opacity:0;animation:rise 1s .35s forwards }
+    .page-title em { font-style:italic;color:#f472a0 }
+    .header-line { width:80px;height:1px;background:linear-gradient(90deg,transparent,#f472a0,transparent);margin:22px auto;opacity:0;animation:rise .8s .55s forwards }
+    .mirror-intro { font-size:.93rem;font-weight:300;line-height:2.1;color:rgba(240,232,237,.62);text-align:center;max-width:440px;margin:0 auto;opacity:0;animation:rise .8s .72s forwards }
+
+    /* ══════════════════════════════════════════════
+       MIRROR STAGE
+       The stage is position:relative. The petal-ring
+       is position:absolute centred on the mirror glass,
+       but it sits INSIDE the stage (not mirror-wrap),
+       which is large enough to contain it.
+    ══════════════════════════════════════════════ */
+    .mirror-stage {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      /* Top padding provides room so the ring doesn't bleed into header */
+      padding-top: 40px;
+      /* Bottom padding for caption + progress below the ring */
+      padding-bottom: 20px;
+    }
+
+    /*
+      mirror-arena: a square container exactly the size of the petal orbit.
+      The glass and the petal ring are both positioned inside this.
+      Because both are children of the same positioned parent, the petals
+      sit at the correct absolute coordinates and are NEVER clipped.
+    */
+    .mirror-arena {
+      position: relative;
+      /* Ring diameter on desktop = 730px, mobile = 580px */
+      width: min(730px, 94vw);
+      height: min(730px, 94vw);
+      flex-shrink: 0;
+      /* DO NOT set overflow:hidden here — petals must be clickable */
+    }
+
+    /* Glass circle — centred inside arena */
+    .mirror-glass-wrap {
+      position: absolute;
+      /* glass diameter = 42% of arena so ring sits comfortably outside */
+      width: 42%;
+      height: 42%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 3;
+    }
+
+    /* Decorative rotating outer ring (purely visual, sits around glass) */
+    .mirror-ring-outer {
+      position: absolute;
+      inset: -18px;
+      border-radius: 50%;
+      border: 1px solid rgba(244,114,160,.22);
+      animation: ringRotate 22s linear infinite;
+      pointer-events: none;
+    }
+    .mirror-ring-outer::before {
+      content:'';position:absolute;top:7px;left:50%;transform:translateX(-50%);
+      width:7px;height:7px;border-radius:50%;
+      background:rgba(244,114,160,.75);box-shadow:0 0 10px rgba(244,114,160,.9);
+    }
+    .mirror-ring-outer::after {
+      content:'';position:absolute;bottom:7px;left:50%;transform:translateX(-50%);
+      width:5px;height:5px;border-radius:50%;
+      background:rgba(201,169,110,.6);box-shadow:0 0 8px rgba(201,169,110,.7);
+    }
+    @keyframes ringRotate { to { transform:rotate(360deg) } }
+
+    .mirror-glass {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 33% 33%, rgba(244,114,160,.17) 0%, rgba(10,4,10,.95) 62%);
+      border: 2px solid rgba(244,114,160,.42);
+      box-shadow:
+        0 0 80px rgba(244,114,160,.26),
+        0 0 160px rgba(244,114,160,.1),
+        inset 0 0 60px rgba(244,114,160,.09);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      transition: box-shadow 1.5s ease, border-color 1.5s ease;
+    }
+    .mirror-shine {
+      position:absolute;top:7%;left:9%;width:30%;height:24%;
+      border-radius:50%;
+      background:radial-gradient(ellipse,rgba(255,255,255,.1),transparent);
+      transform:rotate(-28deg);pointer-events:none;
+      transition:opacity .8s ease;
+    }
+
+    /* Photo reveal inside glass */
+    .mirror-photo {
+      position:absolute;inset:0;border-radius:50%;overflow:hidden;
+      opacity:0;transition:none;z-index:1;
+    }
+    .mirror-photo img {
+      width:100%;height:100%;object-fit:cover;object-position:center top;
+      filter:brightness(.92) contrast(1.06) saturate(1.12);
+      transform:scale(1.06);
+    }
+    .mirror-photo-glow {
+      position:absolute;inset:0;border-radius:50%;
+      background:radial-gradient(circle at 40% 30%,rgba(244,114,160,.22) 0%,transparent 65%);
+      pointer-events:none;z-index:2;
+    }
+    .mirror-photo-vignette {
+      position:absolute;inset:0;border-radius:50%;
+      background:radial-gradient(circle,transparent 52%,rgba(10,4,10,.72) 100%);
+      pointer-events:none;z-index:3;
+    }
+    @keyframes mirrorReveal {
+      0%   { opacity:0; clip-path:circle(0% at 50% 50%) }
+      40%  { opacity:1; clip-path:circle(48% at 50% 50%) }
+      100% { opacity:1; clip-path:circle(52% at 50% 50%) }
+    }
+    .mirror-photo.revealed { animation:mirrorReveal 2.2s cubic-bezier(.23,1,.32,1) forwards }
+    .mirror-glass.revealed {
+      box-shadow:
+        0 0 130px rgba(244,114,160,.55),
+        0 0 260px rgba(244,114,160,.22),
+        inset 0 0 70px rgba(244,114,160,.18);
+      border-color:rgba(244,114,160,.75);
+    }
+
+    /* Mirror message */
+    .mirror-msg { padding:20px 16px;text-align:center;z-index:5;position:relative;transition:opacity .4s ease }
+    .mirror-default { font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.9rem;color:rgba(240,232,237,.35);letter-spacing:.1em }
+    .mirror-truth { display:flex;flex-direction:column;align-items:center;gap:8px }
+    .mirror-truth-icon { font-size:1.7rem }
+    .mirror-truth-title { font-family:'Playfair Display',serif;font-style:italic;font-size:1.05rem;color:var(--tc,#fbaac8) }
+    .mirror-truth-text { font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:300;line-height:1.85;color:rgba(240,232,237,.74) }
+
+    /* ── PETAL RING ──
+       Absolutely centred in .mirror-arena at the arena's full size.
+       pointer-events:none on the ring div itself, but buttons inside
+       have pointer-events:all so they capture clicks.
+       Because .mirror-arena has no overflow:hidden, they are never clipped.
+    */
+    .petal-ring {
+      position: absolute;
+      /* Fill the entire arena */
+      inset: 0;
+      pointer-events: none;  /* ring div: passthrough */
+      z-index: 10;           /* above glass */
+    }
+
+    .petal-btn {
+      position: absolute;
+      /* JS sets left/top as % from centre */
+      transform: translate(-50%, -50%);
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: rgba(244,114,160,.12);
+      border: 1.5px solid rgba(244,114,160,.5);
+      cursor: none;
+      pointer-events: all;   /* ← buttons ARE clickable */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .25s, box-shadow .25s, transform .35s;
+      animation: petalPulse 2.8s ease-in-out infinite, petalIn .55s var(--delay,0s) backwards;
+    }
+    @keyframes petalIn {
+      from { opacity:0; transform:translate(-50%,-50%) scale(.3) rotate(var(--pr,0deg)) }
+      to   { opacity:1; transform:translate(-50%,-50%) scale(1) rotate(0deg) }
+    }
+    @keyframes petalPulse {
+      0%,100% { box-shadow:0 0 0 0 rgba(244,114,160,.45) }
+      60%     { box-shadow:0 0 0 12px rgba(244,114,160,0) }
+    }
+    .petal-btn:hover {
+      background: rgba(244,114,160,.3);
+      box-shadow: 0 0 26px var(--pc, rgba(244,114,160,.65));
+      transform: translate(-50%,-50%) scale(1.38);
+    }
+    .petal-btn.bloomed {
+      background: rgba(244,114,160,.38);
+      border-color: var(--pc, #f472a0);
+      box-shadow: 0 0 22px var(--pc, rgba(244,114,160,.55));
+      animation: bloomedGlow 3s ease-in-out infinite;
+      transform: translate(-50%,-50%) scale(1.18);
+    }
+    @keyframes bloomedGlow {
+      0%,100% { box-shadow:0 0 10px var(--pc, rgba(244,114,160,.4)) }
+      50%     { box-shadow:0 0 24px var(--pc, rgba(244,114,160,.85)), 0 0 0 8px rgba(244,114,160,.09) }
+    }
+    .petal-btn.spiraling {
+      animation: petalSpiral .85s cubic-bezier(.23,1,.32,1) forwards !important;
+    }
+    @keyframes petalSpiral {
+      0%   { transform:translate(-50%,-50%) scale(1.18); opacity:1 }
+      60%  { transform:translate(-50%,-50%) scale(2.2) rotate(180deg); opacity:.4 }
+      100% { transform:translate(-50%,-50%) scale(0) rotate(360deg); opacity:0 }
+    }
+    .petal-icon { font-size:1.4rem; pointer-events:none }
+
+    /* Reveal caption */
+    .reveal-caption {
+      margin-top: 18px;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.18rem;
+      color: #fbaac8;
+      opacity: 0;
+      transition: opacity 1.5s ease .6s;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+    .reveal-caption.show { opacity: 1 }
+
+    /* Progress */
+    .mirror-progress {
+      font-size: .65rem;
+      letter-spacing: .32em;
+      text-transform: uppercase;
+      color: rgba(240,232,237,.42);
+      margin-top: 20px;
+      position: relative;
+      z-index: 2;
+      text-align: center;
+    }
+    .prog-bar-wrap {
+      width: 230px;
+      height: 2px;
+      background: rgba(244,114,160,.12);
+      margin: 10px auto 0;
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+      z-index: 2;
+    }
+    .prog-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #f472a0, #fbaac8);
+      transition: width .55s cubic-bezier(.23,1,.32,1);
+      box-shadow: 0 0 10px rgba(244,114,160,.6);
+    }
+
+    /* Finale */
+    .mirror-finale {
+      max-width: 560px;
+      width: 90%;
+      margin: 44px auto 0;
+      padding: 48px 50px;
+      text-align: center;
+      background: linear-gradient(145deg,rgba(30,12,24,.97),rgba(14,5,12,.99));
+      border: 1px solid rgba(244,114,160,.35);
+      box-shadow: 0 24px 90px rgba(150,40,75,.24);
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity .9s ease, transform .9s ease;
+      pointer-events: none;
+      position: relative;
+      z-index: 2;
+    }
+    .mirror-finale::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,transparent,#f472a0,transparent);
+    }
+    .mirror-finale.show { opacity:1; transform:translateY(0); pointer-events:auto }
+    .finale-flowers { font-size:1.6rem;margin:14px 0;letter-spacing:8px }
+    .finale-title { font-family:'Playfair Display',serif;font-style:italic;font-size:1.65rem;color:#fbaac8;margin-bottom:16px }
+    .finale-msg { font-size:.9rem;font-weight:300;line-height:2.2;color:rgba(240,232,237,.72) }
+
+    /* Pokémon */
+    .pokemon-layer { position:fixed;inset:0;pointer-events:none;z-index:50;overflow:hidden }
+    .pk-wrap { position:absolute;pointer-events:none }
+    .pk-sprite { font-size:2.4rem;display:block;animation:pkFloat var(--dur,5s) ease-in-out forwards;filter:drop-shadow(0 4px 14px rgba(244,114,160,.6)) }
+    @keyframes pkFloat {
+      0%   { opacity:0;transform:translateY(20px)scale(.5) }
+      15%  { opacity:1;transform:translateY(-12px)scale(1.15) }
+      50%  { opacity:1;transform:translateY(-28px)scale(1)rotate(var(--rot,4deg)) }
+      85%  { opacity:1;transform:translateY(-18px)scale(1.08) }
+      100% { opacity:0;transform:translateY(-65px)scale(.65) }
+    }
+    .pk-speech {
+      position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);
+      background:rgba(14,5,12,.93);border:1px solid rgba(244,114,160,.45);
+      padding:5px 12px;border-radius:18px;font-size:.63rem;font-weight:300;
+      letter-spacing:.05em;color:#fbaac8;white-space:nowrap;
+      animation:speechPop var(--dur,5s) ease-in-out forwards;
+    }
+    @keyframes speechPop {
+      0%   { opacity:0;transform:translateX(-50%)scale(.5)translateY(6px) }
+      18%  { opacity:1;transform:translateX(-50%)scale(1)translateY(0) }
+      78%  { opacity:1 }
+      100% { opacity:0;transform:translateX(-50%)scale(.8)translateY(-8px) }
+    }
+
+    /* Misc */
+    .divider { width:1px;height:58px;background:linear-gradient(to bottom,transparent,rgba(201,169,110,.28),transparent);margin:60px auto 52px;position:relative;z-index:2 }
+    .back-link { display:block;text-align:center;text-decoration:none;font-size:.61rem;letter-spacing:.46em;text-transform:uppercase;color:#f472a0;margin:0 auto 92px;position:relative;z-index:2;transition:letter-spacing .3s,color .3s;cursor:none }
+    .back-link:hover { letter-spacing:.64em;color:#fbaac8 }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .mirror-arena { width:min(580px,96vw); height:min(580px,96vw) }
+      .mirror-glass-wrap { width:46%; height:46% }
+      .petal-btn { width:44px; height:44px }
+      .petal-icon { font-size:1.15rem }
+      .mirror-finale { padding:36px 22px }
+    }
+    @media (max-width: 400px) {
+      .mirror-arena { width:98vw; height:98vw }
+      .petal-btn { width:38px; height:38px }
+      .petal-icon { font-size:1rem }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+  <div class="petals-rain" id="petalsRain"></div>
+  <div class="starfield" id="starfield"></div>
+  <div class="glow-orb"></div>
+  <div class="pokemon-layer" id="pokemonLayer"></div>
+
+  <!-- HEADER -->
+  <section class="page-hero">
+    <p class="eyebrow">a love letter in petals</p>
+    <h1 class="page-title">The <em>Mirror</em> Knows</h1>
+    <div class="header-line"></div>
+    <p class="mirror-intro">Each petal holds a truth about you.<br>Touch every one — discover what I see when I look at you. 🌸</p>
+  </section>
+
+  <!-- MIRROR STAGE -->
+  <section class="mirror-stage">
+
+    <!--
+      mirror-arena: full-size container (730px desktop / 580px mobile).
+      Both the glass and the petal ring are children so nothing clips.
+    -->
+    <div class="mirror-arena" id="mirrorArena">
+
+      <!-- Glass circle (centred by CSS) -->
+      <div class="mirror-glass-wrap" id="mirrorGlassWrap">
+        <div class="mirror-ring-outer"></div>
+        <div class="mirror-glass" id="mirrorGlass">
+          <div class="mirror-photo" id="mirrorPhoto">
+            <img src="../images/Woman.jpeg" alt="Her">
+            <div class="mirror-photo-glow"></div>
+            <div class="mirror-photo-vignette"></div>
+          </div>
+          <div class="mirror-msg" id="mirrorMsg">
+            <span class="mirror-default">✦ touch a petal to begin ✦</span>
+          </div>
+          <div class="mirror-shine" id="mirrorShine"></div>
+        </div>
+      </div>
+
+      <!-- Petal ring (fills arena, petals positioned from arena centre) -->
+      <div class="petal-ring" id="petalRing"></div>
+
+    </div>
+    <!-- END mirror-arena -->
+
+    <div class="reveal-caption" id="revealCaption">This is what I see when I look at you. ✨</div>
+    <p class="mirror-progress" id="mirrorProg">0 of 12 petals bloomed</p>
+    <div class="prog-bar-wrap"><div class="prog-bar-fill" id="progFill"></div></div>
+
+    <div class="mirror-finale" id="mirrorFinale">
+      <div class="finale-flowers">🌸🌷🌹🌺🌸</div>
+      <h2 class="finale-title">The mirror never lies.</h2>
+      <p class="finale-msg">
+        Every truth those petals held — that is you. Not just on your best days.
+        Every single day. You are extraordinary in ways you have yet to fully see,
+        and I am the lucky one who gets to witness all of it.
+        <br><br>
+        Happy Women's Day, my love. The most beautiful person I know. 👑
+      </p>
+      <div class="finale-flowers">🌸🌷🌹🌺🌸</div>
+    </div>
+
+  </section>
+
+  <div class="divider"></div>
+  <a href="../womensday.html" class="back-link">← back to women's day</a>
+
+<script>
+  const truths = [
+    {icon:"🌸",color:"#f4a0b0",title:"Breathtakingly Beautiful",msg:"You don't just turn heads — you stop time. The way you look, the way you carry yourself... there are no words worthy enough, but I will spend a lifetime trying to find them."},
+    {icon:"🌷",color:"#e87a90",title:"Quietly Powerful",msg:"There is a strength in you that doesn't roar — it endures. Steady, unbreakable, beautifully fierce. You handle what would break most people with a grace that leaves me in awe."},
+    {icon:"🌺",color:"#d4607a",title:"Radiant Soul",msg:"Your inner light is not something you put on — it is something you simply are. Rooms feel warmer when you enter them. I feel warmer when you enter my life."},
+    {icon:"✿", color:"#f0b8c8",title:"Effortlessly Charming",msg:"The way you laugh, the way your eyes dance when something delights you — you are magnetic. You don't try to be enchanting. You just are."},
+    {icon:"🌸",color:"#e8899e",title:"Fiercely Kind",msg:"Your kindness is not weakness — it is one of the bravest things I have ever witnessed. You choose softness in a hard world, and that takes more courage than most people ever find."},
+    {icon:"🌹",color:"#c25068",title:"Wildly Intelligent",msg:"The way your mind works — the observations you make, the connections you draw — it is endlessly fascinating. Your intelligence is one of the most beautiful things about you."},
+    {icon:"🌷",color:"#f2a0b8",title:"Deeply Worthy",msg:"You deserve every good thing — every peace, every joy, every dream you have ever whispered to yourself at night. You are not too much. You are more than enough."},
+    {icon:"✦", color:"#f8c8d4",title:"My Favourite Person",msg:"Out of everyone in the world, it is always you. Your company, your voice, your presence — there is nowhere I would rather be than right beside you."},
+    {icon:"🌺",color:"#dc7088",title:"Unshakeably Strong",msg:"The hard days, the quiet struggles, the moments no one else sees — you face them. You don't crumble. You breathe, you endure, and you rise again. That is warrior-level grace."},
+    {icon:"🌸",color:"#f4b0c0",title:"Genuinely Magical",msg:"There are things about you I cannot explain — the way you make ordinary moments feel like memories worth keeping. Everything feels more alive when you are near. You are magic."},
+    {icon:"🌷",color:"#e8889a",title:"A Force of Nature",msg:"You are not a gentle breeze. You are the kind of wind that moves mountains, shapes oceans, and changes the direction of lives. My life changed direction the moment you came into it."},
+    {icon:"✿", color:"#fac8d8",title:"Endlessly Inspiring",msg:"Watching you — your drive, your heart, your determination — makes me want to be better every single day. You inspire me without even trying. That is a rare and precious gift."},
+  ];
+
+  const pkData = [
+    {sprite:"🌸",says:["so pretty~ ♡","uwu uwu!","she's glowing!"]},
+    {sprite:"⭐",says:["beautiful!","wow wow!","shine bright ✨"]},
+    {sprite:"🌟",says:["so elegant ♡","amazing!!","gorgeous~"]},
+    {sprite:"💫",says:["she's the best!","so radiant!","♡♡♡"]},
+    {sprite:"🌺",says:["so lovely~","healing vibes!","adore her!"]},
+    {sprite:"✨",says:["so beautiful!","she's perfect!","togepiii~!"]},
+    {sprite:"🦋",says:["she sparkles!","flutter ♡","wow~"]},
+    {sprite:"💝",says:["full of love!","she deserves it!","♡♡♡"]},
+  ];
+
+  const ring  = document.getElementById('petalRing');
+  const arena = document.getElementById('mirrorArena');
+  const total = truths.length;
+  let bloomed  = 0;
+  let revealed = false;
+
+  // ── Place petals ─────────────────────────────────────────
+  // Petal ring fills the arena. Arena centre = 50%, 50%.
+  // We position each button as left/top % from that centre.
+  function buildPetals() {
+    const arenaSize = arena.offsetWidth;          // actual px width of arena
+    const orbitR    = arenaSize * 0.47;           // orbit = 47% of arena → stays inside
+
+    truths.forEach((t, i) => {
+      const angle = (i / total) * 360 - 90;       // start at top
+      const rad   = angle * Math.PI / 180;
+      const cx    = arenaSize / 2;
+      const cy    = arenaSize / 2;
+      const bx    = cx + Math.cos(rad) * orbitR;  // absolute px in arena
+      const by    = cy + Math.sin(rad) * orbitR;
+
+      const btn = document.createElement('button');
+      btn.className = 'petal-btn';
+      // Use px-based left/top so the orbit radius scales with arena
+      btn.style.cssText = [
+        `left:${bx}px`,
+        `top:${by}px`,
+        `--pc:${t.color}`,
+        `--delay:${i * 0.08}s`,
+        `--pr:${(Math.random() - .5) * 60}deg`,
+      ].join(';');
+      btn.innerHTML = `<span class="petal-icon">${t.icon}</span>`;
+      ring.appendChild(btn);
+
+      btn.addEventListener('click', () => {
+        if (btn.classList.contains('bloomed')) return;
+        btn.classList.add('bloomed');
+        bloomed++;
+
+        // Update mirror message
+        const msg = document.getElementById('mirrorMsg');
+        msg.style.opacity = '0';
+        setTimeout(() => {
+          msg.innerHTML = `<div class="mirror-truth">
+            <div class="mirror-truth-icon">${t.icon}</div>
+            <h3 class="mirror-truth-title" style="--tc:${t.color}">${t.title}</h3>
+            <p class="mirror-truth-text">${t.msg}</p>
+          </div>`;
+          msg.style.opacity = '1';
+          msg.style.transition = 'opacity .45s ease';
+        }, 210);
+
+        // Progress bar
+        document.getElementById('mirrorProg').textContent = `${bloomed} of ${total} petals bloomed`;
+        document.getElementById('progFill').style.width = (bloomed / total * 100) + '%';
+
+        // Click burst
+        const r = btn.getBoundingClientRect();
+        [t.icon,'✨','💕'].forEach((s, si) => {
+          setTimeout(() => {
+            const h = document.createElement('div'); h.className = 'heart-burst';
+            h.textContent = s;
+            h.style.left = (r.left + r.width/2  + (Math.random()-.5)*55) + 'px';
+            h.style.top  = (r.top  + r.height/2 + (Math.random()-.5)*55) + 'px';
+            h.style.fontSize = (13 + Math.random()*13) + 'px';
+            document.body.appendChild(h); setTimeout(() => h.remove(), 960);
+          }, si * 85);
+        });
+
+        // Pokémon every 3 petals
+        if (bloomed % 3 === 0 && bloomed < total) spawnPokemon(1);
+
+        if (bloomed === total && !revealed) {
+          revealed = true;
+          setTimeout(triggerReveal, 650);
+        }
+      });
+    });
+  }
+
+  // ── Photo reveal sequence ────────────────────────────────
+  function triggerReveal() {
+    // 1. Spiral petals inward
+    document.querySelectorAll('.petal-btn').forEach((btn, i) => {
+      setTimeout(() => btn.classList.add('spiraling'), i * 50);
+    });
+
+    // 2. Fade mirror text
+    setTimeout(() => {
+      const msg = document.getElementById('mirrorMsg');
+      msg.style.transition = 'opacity .7s ease';
+      msg.style.opacity = '0';
+      document.getElementById('mirrorShine').style.opacity = '0';
+    }, total * 50 + 200);
+
+    // 3. Reveal photo
+    setTimeout(() => {
+      document.getElementById('mirrorGlass').classList.add('revealed');
+      document.getElementById('mirrorPhoto').classList.add('revealed');
+      document.getElementById('revealCaption').classList.add('show');
+
+      // Celebration burst
+      for (let i = 0; i < 28; i++) {
+        setTimeout(() => {
+          const h = document.createElement('div'); h.className = 'heart-burst';
+          h.textContent = ['🌸','🌷','🌹','✿','❤','🌺','💕','✨'][Math.floor(Math.random()*8)];
+          h.style.left = Math.random() * window.innerWidth + 'px';
+          h.style.top  = (Math.random() * .65 + .1) * window.innerHeight + 'px';
+          h.style.fontSize = (14 + Math.random()*20) + 'px';
+          document.body.appendChild(h); setTimeout(() => h.remove(), 960);
+        }, i * 95);
+      }
+      spawnPokemon(6);
+    }, total * 50 + 980);
+
+    // 4. Finale card
+    setTimeout(() => {
+      document.getElementById('mirrorFinale').classList.add('show');
+      spawnPokemon(3);
+    }, total * 50 + 3600);
+  }
+
+  // ── Pokémon spawn ────────────────────────────────────────
+  function spawnPokemon(count) {
+    const layer = document.getElementById('pokemonLayer');
+    for (let i = 0; i < count; i++) {
+      setTimeout(() => {
+        const pk  = pkData[Math.floor(Math.random() * pkData.length)];
+        const say = pk.says[Math.floor(Math.random() * pk.says.length)];
+        const x   = 5 + Math.random() * 88;
+        const y   = 12 + Math.random() * 65;
+        const dur = 4.5 + Math.random() * 3.5;
+        const rot = (Math.random() - .5) * 22;
+
+        const wrap = document.createElement('div');
+        wrap.className = 'pk-wrap';
+        wrap.style.cssText = `left:${x}%;top:${y}%;`;
+
+        const sprite = document.createElement('div');
+        sprite.className = 'pk-sprite';
+        sprite.textContent = pk.sprite;
+        sprite.style.cssText = `--dur:${dur}s;--rot:${rot}deg;font-size:${2.1+Math.random()*.9}rem;`;
+
+        const speech = document.createElement('div');
+        speech.className = 'pk-speech';
+        speech.textContent = say;
+        speech.style.cssText = `--dur:${dur}s;`;
+
+        wrap.appendChild(speech);
+        wrap.appendChild(sprite);
+        layer.appendChild(wrap);
+        setTimeout(() => wrap.remove(), (dur + .7) * 1000);
+      }, i * 380);
+    }
+  }
+
+  // ── Background ───────────────────────────────────────────
+  const sf = document.getElementById('starfield');
+  for (let i=0;i<100;i++) {
+    const s = document.createElement('div'); s.className='star';
+    const z = .4 + Math.random()*1.7;
+    s.style.cssText=`width:${z}px;height:${z}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${2+Math.random()*5}s;animation-delay:${Math.random()*8}s;opacity:${.1+Math.random()*.42};`;
+    sf.appendChild(s);
+  }
+
+  const pr = document.getElementById('petalsRain');
+  ['🌸','🌷','✿','🌺','❀','🌹'].forEach(c => {
+    for (let i=0;i<7;i++) {
+      const p = document.createElement('span'); p.className='petal'; p.textContent=c;
+      p.style.cssText=`left:${Math.random()*100}vw;animation-duration:${11+Math.random()*13}s;animation-delay:${Math.random()*16}s;font-size:${9+Math.random()*10}px;opacity:${.25+Math.random()*.38};`;
+      pr.appendChild(p);
+    }
+  });
+
+  // Cursor
+  const cur=document.getElementById('cursor'), ring2=document.getElementById('cursorRing');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+  (function l(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;cur.style.left=mx+'px';cur.style.top=my+'px';ring2.style.left=rx+'px';ring2.style.top=ry+'px';requestAnimationFrame(l);})();
+
+  document.addEventListener('click', e => {
+    if (e.target.closest('.petal-btn')) return;
+    ['🌸','🌷','✿'].forEach((s,i) => {
+      setTimeout(() => {
+        const h=document.createElement('div');h.className='heart-burst';h.textContent=s;
+        h.style.left=(e.clientX+(Math.random()-.5)*55)+'px';
+        h.style.top=(e.clientY+(Math.random()-.5)*55)+'px';
+        h.style.fontSize=(12+Math.random()*12)+'px';
+        document.body.appendChild(h);setTimeout(()=>h.remove(),960);
+      }, i*70);
+    });
+  });
+
+  // Build petals after layout is ready
+  window.addEventListener('load', buildPetals);
+  // Idle Pokémon
+  setTimeout(() => spawnPokemon(1), 4500);
+  setInterval(() => { if (!revealed) spawnPokemon(1); }, 14000);
+</script>
+</body>
+</html>
