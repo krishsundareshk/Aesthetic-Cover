@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>In Awe of Her</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+  <div class="petals" id="petals"></div>
+  <div class="starfield" id="starfield"></div>
+  <div class="glow-orb"></div>
+
+  <!-- ─── Header ─────────────────────────────────── -->
+  <header>
+    <p class="eyebrow">a love letter in light</p>
+    <h1>In <em>Awe</em> <span class="thin">&amp;</span> <em>Adoration</em></h1>
+    <div class="header-line"></div>
+    <p class="header-sub">hover her portrait &middot; see what I see</p>
+  </header>
+
+  <!-- ─── Portrait + Hotspots ─────────────────────── -->
+  <section class="portrait-section">
+
+    <div class="portrait-frame">
+      <div class="c-bl"></div>
+      <div class="c-tr"></div>
+
+      <img src="images/Main.jpeg" class="main-img" id="mainImg" alt="Her portrait">
+
+      <!-- Hotspots — positions set as % of image display size (380×507px) -->
+      <a href="pages/hair.html"  class="hotspot hs-hair">
+        <span class="hotspot-label">Her Hair</span>
+      </a>
+      <a href="pages/eyes.html"  class="hotspot hs-eyes">
+        <span class="hotspot-label">Her Eyes</span>
+      </a>
+      <a href="pages/nose.html"  class="hotspot hs-nose">
+        <span class="hotspot-label">Her Nose</span>
+      </a>
+      <a href="pages/smile.html" class="hotspot hs-smile">
+        <span class="hotspot-label">Her Smile</span>
+      </a>
+      <a href="pages/dress.html" class="hotspot hs-dress">
+        <span class="hotspot-label">Her Dress</span>
+      </a>
+    </div>
+
+    <!-- Side quotes -->
+    <aside class="side-quote">
+      <div class="quote-block">
+        <blockquote>"Your beauty is breathtaking; every feature is a star, and together they form a constellation that outshines the night sky."</blockquote>
+        <cite>for her, always</cite>
+      </div>
+      <div class="quote-block">
+        <blockquote>"Milady, my Queen—my life was forged to defend your life, but my heart was born only to serve you. I offer you more than my protection; I offer you a life where every sunrise is peace and every sunset is joy. I will be the wall against the storm and the hand that brings you laughter. From this breath until my very last, I am yours, and your happiness is the only kingdom I seek to build."</blockquote>
+        <cite>a quiet truth</cite>
+      </div>
+      <div class="quote-block">
+        <blockquote>"To the one who weaves her own destiny: I see the silent vigils you keep and the tireless grace with which you build your world, brick by golden brick. Others see the crown you wear, but I see the hands that forged it. My pride is not in my own name, but in the honor of walking beside a woman of such fierce and steady light. My ego is a shadow that vanishes in your glow; my only decree is to be the soil that supports your roots and the wind that carries you higher. Your journey is my greatest marvel, and I am yours, heart and soul, through every climb."</blockquote>
+        <cite>written in wonder</cite>
+      </div>
+    </aside>
+
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ─── Constellation Nav ───────────────────────── -->
+  <section class="constellation-section">
+    <span class="section-label">her constellation</span>
+
+    <div class="constellation-map" id="constMap">
+      <!-- SVG connecting lines -->
+      <svg class="constellation-svg" id="constSvg" viewBox="0 0 740 120" preserveAspectRatio="xMidYMid meet">
+        <line class="c-line" x1="93" y1="60" x2="185" y2="60"/>
+        <line class="c-line" x1="277" y1="60" x2="370" y2="60"/>
+        <line class="c-line" x1="463" y1="60" x2="555" y2="60"/>
+        <line class="c-line" x1="648" y1="60" x2="740" y2="60"/>
+        <line class="c-line" x1="740" y1="60" x2="832" y2="60"/>
+      </svg>
+
+      <a href="pages/hair.html"  class="ctile">
+        <div class="ctile-star">◇</div>
+        <span class="ctile-name">Hair</span>
+      </a>
+      <div class="c-dot"></div>
+      <a href="pages/eyes.html"  class="ctile">
+        <div class="ctile-star">✦</div>
+        <span class="ctile-name">Eyes</span>
+      </a>
+      <div class="c-dot"></div>
+      <a href="pages/smile.html" class="ctile">
+        <div class="ctile-star">✿</div>
+        <span class="ctile-name">Smile</span>
+      </a>
+      <div class="c-dot"></div>
+      <a href="pages/nose.html"  class="ctile">
+        <div class="ctile-star">◈</div>
+        <span class="ctile-name">Nose</span>
+      </a>
+      <div class="c-dot"></div>
+      <a href="pages/dress.html" class="ctile">
+        <div class="ctile-star">✧</div>
+        <span class="ctile-name">Dress</span>
+      </a>
+      <div class="c-dot"></div>
+      <a href="womensday.html" class="ctile ctile-wd" style="border-color:rgba(244,114,160,.35);background:rgba(244,114,160,.06);">
+        <div class="ctile-star" style="border-color:rgba(244,114,160,.7);color:#f472a0;background:rgba(244,114,160,.15);">🌸</div>
+        <span class="ctile-name" style="color:rgba(244,160,184,.85);">Women's Day</span>
+      </a>
+    </div>
+  </section>
+
+  <audio autoplay loop>
+    <source src="music.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    // ── Starfield ──────────────────────────────────
+    const sf = document.getElementById('starfield');
+    for (let i = 0; i < 120; i++) {
+      const s = document.createElement('div');
+      s.className = 'star';
+      const size = .5 + Math.random() * 1.8;
+      s.style.cssText = `
+        width:${size}px; height:${size}px;
+        left:${Math.random()*100}%; top:${Math.random()*100}%;
+        animation-duration:${2 + Math.random()*4}s;
+        animation-delay:${Math.random()*6}s;
+        opacity:${.1 + Math.random()*.5};
+      `;
+      sf.appendChild(s);
+    }
+
+    // ── Custom Cursor ──────────────────────────────
+    const cursor     = document.getElementById('cursor');
+    const cursorRing = document.getElementById('cursorRing');
+    let mx=0,my=0,rx=0,ry=0;
+    document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+    (function loop() {
+      rx += (mx-rx)*.13; ry += (my-ry)*.13;
+      cursor.style.left     = mx+'px'; cursor.style.top     = my+'px';
+      cursorRing.style.left = rx+'px'; cursorRing.style.top = ry+'px';
+      requestAnimationFrame(loop);
+    })();
+
+    // ── Heart burst ────────────────────────────────
+    const symbols = ['❤','♡','✦','✿','✧','◇'];
+    document.addEventListener('click', e => {
+      for (let i = 0; i < 6; i++) {
+        setTimeout(() => {
+          const h = document.createElement('div');
+          h.className = 'heart-burst';
+          h.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+          h.style.left  = (e.clientX + (Math.random()-.5)*50) + 'px';
+          h.style.top   = (e.clientY + (Math.random()-.5)*50) + 'px';
+          h.style.color = `hsl(${345+Math.random()*25},60%,${65+Math.random()*20}%)`;
+          h.style.fontSize = (10+Math.random()*14)+'px';
+          document.body.appendChild(h);
+          setTimeout(()=>h.remove(), 860);
+        }, i*55);
+      }
+    });
+
+    // ── Petal Rain ─────────────────────────────────
+    const pc = document.getElementById('petals');
+    const ps = ['✿','❀','✾','⚘'];
+    for (let i = 0; i < 20; i++) {
+      const p = document.createElement('span');
+      p.className = 'petal';
+      p.textContent = ps[Math.floor(Math.random()*ps.length)];
+      p.style.cssText = `
+        left:${Math.random()*100}vw;
+        animation-duration:${9+Math.random()*13}s;
+        animation-delay:${Math.random()*14}s;
+        font-size:${9+Math.random()*9}px;
+        color:hsl(${345+Math.random()*25},45%,${65+Math.random()*20}%);
+        opacity:${.25+Math.random()*.35};
+      `;
+      pc.appendChild(p);
+    }
+
+    // ── Hotspot positions — mapped on 720×960 original ─
+    // Image is a mirror selfie; girl is on the LEFT side.
+    // Hair:  left-side flowing dark hair    ~ (215, 340)
+    // Eyes:  glasses / eye area             ~ (330, 375)
+    // Nose:  tip of nose                    ~ (325, 422)
+    // Smile: lips                           ~ (312, 458)
+    // Dress: white top, chest centre        ~ (278, 592)
+    const img = document.getElementById('mainImg');
+    function placeHotspots() {
+      const spots = [
+        { el: document.querySelector('.hs-hair'),  ox: 350, oy: 390 },
+        { el: document.querySelector('.hs-eyes'),  ox: 300, oy: 480 },
+        { el: document.querySelector('.hs-nose'),  ox: 365, oy: 500 },
+        { el: document.querySelector('.hs-smile'), ox: 340, oy: 540 },
+        { el: document.querySelector('.hs-dress'), ox: 500, oy: 770 },
+      ];
+      spots.forEach(({ el, ox, oy }) => {
+        el.style.left = (ox / 720 * 100) + '%';
+        el.style.top  = (oy / 960 * 100) + '%';
+      });
+    }
+    img.addEventListener('load', placeHotspots);
+    if (img.complete) placeHotspots();
+  </script>
+
+</body>
+</html>
